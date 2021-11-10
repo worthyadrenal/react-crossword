@@ -1,5 +1,14 @@
 # React Crossword
 
+----
+
+⚠️ This project is no longer maintained. Some alternatives:
++ [MyCrossword](https://www.npmjs.com/package/mycrossword) by Tom Blackwell
++ [React Crossword](https://www.npmjs.com/package/@guardian/react-crossword) by The Guardian
++ [React Crossword](https://www.npmjs.com/package/@jaredreisinger/react-crossword) by Jared Reisinger
+
+----
+
 This is a React crossword component extracted from the [Guardian Frontend application](https://github.com/guardian/frontend).
 
 [Package on NPM](https://www.npmjs.com/package/react-crossword).
