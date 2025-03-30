@@ -1,25 +1,17 @@
-# Base Ruby image
-FROM ruby:3.2
+# Step 1: Build the React app
+FROM node:18 AS build
 
-# Install system dependencies
-RUN apt-get update -qq && apt-get install -y nodejs yarn postgresql-client build-essential libpq-dev
-
-# Set working directory
 WORKDIR /app
-
-# Copy the app files
 COPY . .
 
-# Install dependencies
-RUN gem install bundler
-RUN bundle install
+# Install dependencies and build
 RUN yarn install
+RUN yarn build
 
-# Precompile assets
-RUN RAILS_ENV=production SECRET_KEY_BASE=dummy_key bundle exec rake assets:precompile
+# Step 2: Serve with Nginx
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port
-EXPOSE 8080
+EXPOSE 80
 
-# Start server (use port 8080 for Cloud Run)
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["nginx", "-g", "daemon off;"]
