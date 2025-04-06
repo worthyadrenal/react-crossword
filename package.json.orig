@@ -20,7 +20,6 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@webpack-cli/serve": "^3.0.1",
     "babel-loader": "^8.1.0",
     "chance": "1.0.11",
     "css-loader": "3.6.0",
@@ -33,18 +32,18 @@
     "jest": "^24.9.0",
     "jest-environment-jsdom": "^24.9.0",
     "jest-environment-jsdom-global": "^1.1.0",
+    "node-sass": "^4.13.1",
     "prettier": "1.13.4",
-    "react": "17",
-    "react-dom": "17",
-    "sass": "^1.70.0",
+    "react": ">=16.4.1",
+    "react-dom": ">=16.4.1",
     "sass-loader": "^7.1.0",
     "sass-mq": "~3.3.2",
     "style-loader": "^0.23.1",
     "svg-inline-loader": "^0.8.0",
     "terser-webpack-plugin": "^4.2.0",
-    "webpack": "5",
-    "webpack-cli": "4",
-    "webpack-dev-server": "4"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
   },
   "peerDependencies": {
     "react": ">=16.4.1",
@@ -66,11 +65,16 @@
     },
     "testEnvironment": "jest-environment-jsdom-global"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zetter/react-crossword.git"
+  },
+  "homepage": "https://github.com/zetter/react-crossword",
   "scripts": {
     "eslint-fix": "eslint --color --fix src/javascripts examples *.js",
     "eslint": "eslint --color src/javascripts examples *.js",
     "test": "yarn eslint && yarn jest",
-    "examples": "yarn run webpack-dev-server --host 0.0.0.0 --port 8080 --config webpack.config.examples.js",
+    "examples": "yarn run webpack-dev-server --host 0.0.0.0 --config webpack.config.examples.js",
     "build": "yarn run webpack --config webpack.config.js"
   },
   "files": [

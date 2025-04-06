@@ -1,6 +1,9 @@
 # Step 1: Build the React app
 FROM node:18 AS build
 
+# Install build dependencies (including Python)
+RUN apt-get update && apt-get install -y python3 make g++ && apt-get clean
+
 WORKDIR /app
 COPY . .
 
