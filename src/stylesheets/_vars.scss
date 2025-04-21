@@ -7,7 +7,7 @@
 // http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#variables
 
 
-@import 'pasteup/grid-system/src';
+@use 'pasteup/grid-system/src' as *;
 
 $right-column:     gs-span(4);
 $left-column:      gs-span(2); // Grows to 3 columns on wide viewports

@@ -1,4 +1,10 @@
-@import 'vars';
-@import 'mixins';
-@import 'pasteup/buttons/styles';
-@import 'crosswords/main';
+// react-crossword/src/stylesheets/main.scss
+
+@use "./_mq-config" as mq;
+
+@use "sass:math";
+@use "./pasteup/grid-system/src" as *;
+@use "./vars"    as *;
+@use "./mixins";
+@use "./pasteup/buttons/styles";
+@use "./crosswords/main";

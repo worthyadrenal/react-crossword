@@ -1,12 +1,25 @@
 {
   "name": "react-crossword",
   "version": "0.2.0",
-  "author": "Chris Zetter",
+  "description": "A React component for rendering crossword puzzles",
+  "author": "Rob Jack (after Chris Zetter)",
   "private": false,
   "main": "lib/index.js",
+  "module": "lib/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    }
+  },
   "files": [
     "lib"
   ],
+  "scripts": {
+    "build": "babel src --out-dir lib --extensions \".js,.jsx\"",
+    "clean": "rm -rf lib"
+  },
   "dependencies": {
     "bean": "~1.0.14",
     "bonzo": "~2.0.0",
@@ -23,20 +36,12 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.0.0",
-    "@rails/webpacker": "5.4.3",
-    "babel-loader": "^8.2.5",
-    "webpack": "5",
-    "webpack-cli": "4",
-    "webpack-dev-server": "4"
-  },
-  "scripts": {
-    "build": "webpack --config webpack.config.js"
+    "@babel/cli": "^7.24.0",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
+    "sass": "^1.86.3",
+    "sass-migrator": "^2.3.1",
+    "sass-mq": "5.0.0"
   }
 }

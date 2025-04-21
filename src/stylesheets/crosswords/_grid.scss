@@ -1,4 +1,13 @@
-$stickyClueVerticalPadding: ($gs-baseline / 2);
+@use "../pasteup/grid-system/src" as *;
+@use "../pasteup/typography/src" as *;
+@use "../mixins" as *;
+@use "./vars" as *;
+@use "../vars" as *;
+@use "sass:math";
+@use "sass:color" as color;
+@use "../_mq-config" as mq;
+
+$stickyClueVerticalPadding: math.div($gs-baseline, 2);
 $stickyClueLineHeight: 20;
 $stickyClueLines: 2;
 $stickyClueHeight: $stickyClueVerticalPadding * 2 + ($stickyClueLineHeight * $stickyClueLines);
@@ -9,7 +18,7 @@ $stickyClueHeight: $stickyClueVerticalPadding * 2 + ($stickyClueLineHeight * $st
     padding-top: $stickyClueHeight;
     padding-bottom: $stickyClueHeight;
 
-    @include mq(tablet) {
+    @include mq.mq(tablet) {
         float: left;
         // Unset
         padding-top: 0;
@@ -31,19 +40,20 @@ $stickyClueHeight: $stickyClueVerticalPadding * 2 + ($stickyClueLineHeight * $st
     // Needs its own layer so we don't keep repainting when the top value is
     // updated by JS
     will-change: transform;
-
+    
     // Mobile only
-    @include mq(tablet) {
+    @include mq.mq(tablet) {
         display: none;
     }
-
     &.is-fixed {
         // When the element is out of the document flow, we must manually offset
         // for the page gutter
         @include content-gutter();
+        // wrap in & {} to opt into the new, spec‑compliant behavior:
+      & {
         position: fixed;
+      }
     }
-
 }
 
 .crossword__sticky-clue {

@@ -1,3 +1,6 @@
+// bring in the global vars so $highlight-main is defined:
+@use '../_vars' as *;  // ← adjust this path to point at your file that defines $highlight-main
+
 // based on cellSize + borderSize from
 // projects/crosswords/constants.js
 $xword-cell-width: 31px;

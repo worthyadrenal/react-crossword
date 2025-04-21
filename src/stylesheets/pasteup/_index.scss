@@ -1,0 +1,8 @@
+// pasteup/_index.scss
+@use 'grid-system/src' as grid;
+@use 'buttons/src' as buttons;
+@use 'typography/src' as typography;
+
+@forward 'grid-system/src';
+@forward 'buttons/src';
+@forward 'typography/src';

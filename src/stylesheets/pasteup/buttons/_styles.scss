@@ -1,4 +1,11 @@
-@import 'src';
+@use '../typography/src' as *;
+@use './src' as *;
+@use '../../vars' as *;
+@use 'sass:color';
+@use "sass-mq" as mq;
+
+
+
 
 .button {
     @include fs-textSans(2);
@@ -32,7 +39,7 @@
     );
 
     @include button-hover-colour(
-        darken($guardian-brand, 10%)
+        color.adjust($guardian-brand, $lightness: -10%)
     );
 }
 
@@ -43,7 +50,7 @@
     );
 
     @include button-hover-colour(
-        darken($brightness-97, 10%)
+        color.adjust($brightness-97, $lightness: -10%)
     );
 }
 
@@ -56,14 +63,14 @@
 
     @include button-hover-colour(
         transparent,
-        darken($brightness-86, 10%)
+        color.adjust($brightness-86, $lightness: -10%)
     );
 }
 
 .button--large {
     @include button-height($base-size * 6);
 
-    @include mq($from: desktop) {
+    @include mq.mq($from: desktop) {
         line-height: ($base-size * 6) + 2;
     }
 }

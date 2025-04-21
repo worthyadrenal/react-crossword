@@ -1,5 +1,9 @@
-@import '~sass-mq/_mq';
-@import 'pasteup/src';
+@use 'sass-mq' as mq;
+@use './pasteup/grid-system/src' as *;
+@use "sass:math";
+
+
+//@use './vendor/mq-wrapper' as mq;
 
 // Clamps a block of text to a certain number of lines,
 // followed by an ellipsis in Webkit and Blink based browsers
@@ -18,10 +22,10 @@
 }
 
 @mixin content-gutter {
-    padding-left: $gs-gutter/2;
-    padding-right: $gs-gutter/2;
+    padding-left: math.div($gs-gutter, 2);
+    padding-right: math.div($gs-gutter, 2);
 
-    @include mq(mobileLandscape) {
+    @include mq.mq(mobileLandscape) {
         padding-left: $gs-gutter;
         padding-right: $gs-gutter;
     }

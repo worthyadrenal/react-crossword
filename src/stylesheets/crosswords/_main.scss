@@ -1,12 +1,12 @@
-@import 'vars';
+@use '../vars';
 
-@import 'layout';
+@use './layout';
 
-@import 'anagram-helper';
-@import 'accessible';
-@import 'cell';
-@import 'clues';
-@import 'controls';
-@import 'grid';
-@import 'hidden-input';
-@import 'printable';
+@use './anagram-helper';
+@use './accessible';
+@use './cell';
+@use './clues';
+@use './controls';
+@use './grid';
+@use './hidden-input';
+@use './printable';

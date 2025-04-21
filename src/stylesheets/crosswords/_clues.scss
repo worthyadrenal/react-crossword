@@ -1,3 +1,11 @@
+@use "../pasteup/grid-system/src" as *;
+@use "../pasteup/typography/src" as *;
+@use "./vars" as *;
+@use "../vars" as *;
+@use "sass:math";
+@use "sass:color" as color;
+@use "../_mq-config" as mq;
+
 .crossword__clues-header {
     @include fs-header(1);
     border-bottom: 1px dotted $brightness-86;
@@ -39,7 +47,7 @@
     font-weight: bold;
     -webkit-font-smoothing: initial;
     width: $gs-gutter;
-    padding-right: $gs-gutter / 2;
+    padding-right: math.div($gs-gutter, 2);
 
     .has-grouped-clues & {
         width: $gs-gutter * 2;

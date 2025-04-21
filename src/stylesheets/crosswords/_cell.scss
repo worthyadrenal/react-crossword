@@ -1,3 +1,11 @@
+@use "../pasteup/grid-system/src" as *;
+@use "../pasteup/typography/src" as *;
+@use "./vars" as *;
+@use "../vars" as *;
+@use "sass:math";
+@use "sass:color" as color;
+@use "../_mq-config" as mq;
+
 .crossword__cell {
     cursor: pointer;
     fill: #ffffff;
@@ -35,9 +43,9 @@
 
     @each $xword, $cells in $xword-grid-sizes {
         .crossword__container--#{$xword} & {
-            font-size: ceil(1.2px * $cells);
+            font-size: math.ceil(1.2px * $cells);
 
-            @include mq(tablet) {
+            @include mq.mq(tablet) {
                 font-size: 1.1px * $cells;
             }
         }
@@ -49,6 +57,6 @@
 }
 
 .crossword__cell-text--error {
-    fill: darken($news-main, 20%);
+    fill: color.adjust($news-main, $lightness: 20%);
     opacity: 0;
 }

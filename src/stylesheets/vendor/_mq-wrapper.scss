@@ -1,0 +1,5 @@
+@use 'sass-mq' as *;
+
+@mixin mq($args...) {
+  @include mq.mq($args...);
+}

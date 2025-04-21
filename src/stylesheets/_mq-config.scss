@@ -1,0 +1,13 @@
+// _mq-config.scss
+
+$breakpoints: (
+  mobile : 0px,
+  tablet : 640px,
+  desktop: 1024px,
+  leftCol: 1200px,
+  mobileLandscape: 480px
+);
+
+@forward "sass-mq" with (
+  $breakpoints: $breakpoints
+);

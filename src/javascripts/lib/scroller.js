@@ -8,9 +8,10 @@
     Note: if you pass in an element, you must also specify an easing function.
 */
 
-import { createEasing } from 'lib/easing';
+import { createEasing } from './easing';
 import bonzo from 'bonzo';
-import fastdom from 'fastdom';
+import * as fastdom from 'fastdom';
+
 
 const scrollTo = (
   offset,

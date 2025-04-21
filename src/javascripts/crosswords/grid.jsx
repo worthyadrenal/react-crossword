@@ -1,8 +1,8 @@
 import React from 'react';
-import { gridSize, clueMapKey } from 'crosswords/helpers';
-import { constants } from 'crosswords/constants';
-import GridCell from 'crosswords/cell';
-import { classNames } from 'crosswords/classNames';
+import { gridSize, clueMapKey } from './helpers';
+import { constants } from './constants';
+import GridCell from './cell';
+import { classNames } from './classNames';
 
 // Position at end of previous cell
 const createWordSeparator = (x, y, direction) => {
@@ -80,6 +80,7 @@ const createSeparator = (x, y, separatorDescription) => {
   }
 };
 
+
 export const Grid = (props) => {
   const getSeparators = (x, y) => props.separators[clueMapKey(x, y)];
 
@@ -98,10 +99,15 @@ export const Grid = (props) => {
   range(props.rows).forEach(y => range(props.columns).forEach((x) => {
     const cellProps = cellsIn[x][y];
 
+    console.log(`🔍 cellProps[${x}][${y}]:`, cellProps);
+
     if (cellProps.isEditable) {
+      console.log('📦 props.crossword:', props.crossword);
+      console.log('📦 typeof isHighlighted:', typeof props.crossword?.isHighlighted);
       const isHighlighted = props.crossword.isHighlighted(x, y);
       cells.push(
         <GridCell
+          key={`cell_${x}_${y}`}
           {...Object.assign(
             {},
             cellProps,
@@ -109,7 +115,6 @@ export const Grid = (props) => {
               handleSelect,
               x,
               y,
-              key: `cell_${x}_${y}`,
               isHighlighted,
               isFocussed:
                                     props.focussedCell

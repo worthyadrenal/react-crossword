@@ -1,3 +1,13 @@
+// 1) Load sass‑mq so mq.mq() is defined in THIS file
+@use "../_mq-config" as mq;
+@use "./vars" as *;
+// 1) Bring in  font stacks (defines $f‑sans‑serif‑text)
+@use "../pasteup/typography/src" as *;
+@use "../pasteup/grid-system/src" as *;
+@use "../vars" as *;
+@use "sass:color" as color;
+
+
 .crossword__anagram-helper-outer {
     position: fixed;
     box-sizing: border-box;
@@ -19,8 +29,8 @@
         &:hover,
         &:visited,
         &:focus {
-            background-color: darken($lifestyle-main, 10%);
-            border-color: darken($lifestyle-main, 10%);
+            background-color: color.adjust($lifestyle-main, $lightness: 10%);
+            border-color: color.adjust($lifestyle-main, $lightness: 10%);
         }
     }
 
@@ -31,15 +41,15 @@
         &:visited,
         &:focus {
             background-color: transparent;
-            border-color: darken($brightness-86, 15%);
+            border-color: color.adjust($brightness-86, $lightness: 15%);
         }
     }
 
-    @include mq($until: tablet) {
+    @include mq.mq($until: tablet) {
         z-index: 1030;
     }
 
-    @include mq(tablet) {
+    @include mq.mq(tablet) {
         position: absolute;
     }
 }
@@ -72,7 +82,7 @@
     padding-top: 15%;
     text-align: center;
 
-    @include mq(tablet) {
+    @include mq.mq(tablet) {
         padding-top: 25%;
     }
 }
@@ -95,7 +105,7 @@
     border: 1px solid $brightness-86;
     border-left: 1px solid $brightness-86;
 
-    @include mq($until: mobileLandscape) {
+    @include mq.mq($until: mobileLandscape) {
         width: $xword-cell-width-small;
         height: $xword-cell-width-small;
         line-height: $xword-cell-width-small;
@@ -141,7 +151,7 @@
     height: 175px;
     margin: 0 auto;
 
-    @include mq(tablet) {
+    @include mq.mq(tablet) {
         top: 0;
         left: 5%;
         width: 50%;
