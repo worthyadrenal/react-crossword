@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Crossword from 'react-crossword';
 
-const CrosswordViewer = ({ puzzleId = 'cryptic/28548' }) => {
+const CrosswordViewer = ({ puzzleId = 'cryptic/29675' }) => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
