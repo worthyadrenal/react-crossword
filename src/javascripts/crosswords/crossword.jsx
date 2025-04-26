@@ -159,7 +159,7 @@ class Crossword extends Component {
         <Controls
           hasSolutions={'solution' in this.props.data.entries[0]}
           clueInFocus={focused}
-          crossword={this.props.crossword}
+          crossword={this}
         />
         <Clues
           clues={this.props.data.entries.map((entry) => ({
