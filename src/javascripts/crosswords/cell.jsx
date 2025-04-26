@@ -1,62 +1,23 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { gridSize } from './helpers';
 import { constants } from './constants';
 import { classNames } from './classNames';
 
-class Cell extends Component {
-  shouldComponentUpdate(nextProps) {
-    return (
-      this.props.value !== nextProps.value
-            || this.props.isFocussed !== nextProps.isFocussed
-            || this.props.isHighlighted !== nextProps.isHighlighted
-            || this.props.isError !== nextProps.isError
-    );
-  }
-
-  onClick(event) {
+class Cell extends PureComponent {
+  handleClick = (event) => {
     event.preventDefault();
-    this.props.handleSelect(this.props.x, this.props.y);
-  }
+    const { handleSelect, x, y } = this.props;
+    handleSelect(x, y);
+  };
 
   render() {
-    const top = gridSize(this.props.y);
-    const left = gridSize(this.props.x);
+    const { x, y, number, value, isFocussed, isHighlighted, isError } = this.props;
 
-    let cellNumber = null;
-    if (this.props.number !== undefined) {
-      cellNumber = (
-        <text
-          x={left + 1}
-          y={top + constants.numberSize}
-          key="number"
-          className="crossword__cell-number"
-        >
-          {this.props.number}
-        </text>
-      );
-    }
-
-    let cellValue = null;
-    if (this.props.value !== undefined) {
-      cellValue = (
-        <text
-          x={left + constants.cellSize * 0.5}
-          y={top + constants.cellSize * 0.675}
-          key="entry"
-          className={classNames({
-            'crossword__cell-text': true,
-            'crossword__cell-text--focussed': this.props.isFocussed,
-            'crossword__cell-text--error': this.props.isError,
-          })}
-          textAnchor="middle"
-        >
-          {this.props.value}
-        </text>
-      );
-    }
+    const top = gridSize(y);
+    const left = gridSize(x);
 
     return (
-      <g onClick={this.onClick.bind(this)}>
+      <g onClick={this.handleClick}>
         <rect
           x={left}
           y={top}
@@ -64,13 +25,33 @@ class Cell extends Component {
           height={constants.cellSize}
           className={classNames({
             crossword__cell: true,
-            'crossword__cell--focussed': this.props.isFocussed,
-            'crossword__cell--highlighted': this.props
-              .isHighlighted,
+            'crossword__cell--focussed': isFocussed,
+            'crossword__cell--highlighted': isHighlighted,
           })}
         />
-        {cellNumber}
-        {cellValue}
+        {number !== undefined && (
+          <text
+            x={left + 1}
+            y={top + constants.numberSize}
+            className="crossword__cell-number"
+          >
+            {number}
+          </text>
+        )}
+        {value !== undefined && (
+          <text
+            x={left + constants.cellSize * 0.5}
+            y={top + constants.cellSize * 0.675}
+            className={classNames({
+              'crossword__cell-text': true,
+              'crossword__cell-text--focussed': isFocussed,
+              'crossword__cell-text--error': isError,
+            })}
+            textAnchor="middle"
+          >
+            {value}
+          </text>
+        )}
       </g>
     );
   }

@@ -16,18 +16,18 @@ const createWordSeparator = (x, y, direction) => {
       <rect
         x={left - borderWidth - width}
         y={top}
-        key={['sep', direction, x, y].join('_')}
+        key={`sep_${direction}_${x}_${y}`}
         width={width}
         height={constants.cellSize}
       />
     );
-  } if (direction === 'down') {
+  } else if (direction === 'down') {
     const height = 1;
     return (
       <rect
         x={left}
         y={top - borderWidth - height}
-        key={['sep', direction, x, y].join('_')}
+        key={`sep_${direction}_${x}_${y}`}
         width={constants.cellSize}
         height={height}
       />
@@ -35,109 +35,90 @@ const createWordSeparator = (x, y, direction) => {
   }
 };
 
-// Position in-between this and previous cells
+// Position between cells for hyphens
 const createHyphenSeparator = (x, y, direction) => {
   const top = gridSize(y);
   const left = gridSize(x);
   const borderWidth = 1;
-  let width;
-  let height;
 
   if (direction === 'across') {
-    width = constants.cellSize / 4;
-    height = 1;
     return (
       <rect
-        x={left - borderWidth / 2 - width / 2}
-        y={top + constants.cellSize / 2 + height / 2}
-        key={['sep', direction, x, y].join('_')}
-        width={width}
-        height={height}
+        x={left - borderWidth / 2 - constants.cellSize / 8}
+        y={top + constants.cellSize / 2}
+        key={`sep_${direction}_${x}_${y}`}
+        width={constants.cellSize / 4}
+        height={1}
       />
     );
-  } if (direction === 'down') {
-    width = 1;
-    height = constants.cellSize / 4;
+  } else if (direction === 'down') {
     return (
       <rect
-        x={left + constants.cellSize / 2 + width / 2}
-        y={top - borderWidth / 2 - height / 2}
-        key={['sep', direction, x, y].join('_')}
-        width={width}
-        height={height}
+        x={left + constants.cellSize / 2}
+        y={top - borderWidth / 2 - constants.cellSize / 8}
+        key={`sep_${direction}_${x}_${y}`}
+        width={1}
+        height={constants.cellSize / 4}
       />
     );
   }
 };
 
 const createSeparator = (x, y, separatorDescription) => {
-  if (separatorDescription) {
-    if (separatorDescription.separator === ',') {
-      return createWordSeparator(x, y, separatorDescription.direction);
-    } if (separatorDescription.separator === '-') {
-      return createHyphenSeparator(x, y, separatorDescription.direction);
-    }
+  if (!separatorDescription) return null;
+  if (separatorDescription.separator === ',') {
+    return createWordSeparator(x, y, separatorDescription.direction);
+  } else if (separatorDescription.separator === '-') {
+    return createHyphenSeparator(x, y, separatorDescription.direction);
   }
 };
 
+export const Grid = ({ rows, columns, cells, separators, crossword, focussedCell }) => {
+  console.log('🔍 Grid props: rows=', rows, 'columns=', columns, 'cells=', cells);
+  const width = gridSize(columns);
+  const height = gridSize(rows);
 
-export const Grid = (props) => {
-  const getSeparators = (x, y) => props.separators[clueMapKey(x, y)];
+  const cellElements = [];
+  const separatorElements = [];
 
-  const handleSelect = (x, y) => props.crossword.onSelect(x, y);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < columns; x++) {
+      const cellProps = cells[y]?.[x];  // <--- Fix the [row][column] order
 
-  const width = gridSize(props.columns);
-  const height = gridSize(props.rows);
-  const cells = [];
-  let separators = [];
+      if (!cellProps || !cellProps.isEditable) continue;
 
-  const range = n => Array.from({ length: n }, (value, key) => key);
+      const isHighlighted = crossword?.isCellHighlighted
+        ? crossword.isCellHighlighted(x, y)
+        : false;
 
-  // This is needed to appease ESLint (https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-unused-prop-types.md#false-positives-sfc)
-  const cellsIn = props.cells;
+      const isFocussed =
+        focussedCell &&
+        focussedCell.x === x &&
+        focussedCell.y === y;
 
-  range(props.rows).forEach(y => range(props.columns).forEach((x) => {
-    const cellProps = cellsIn[x][y];
-
-    console.log(`🔍 cellProps[${x}][${y}]:`, cellProps);
-
-    if (cellProps.isEditable) {
-      console.log('📦 props.crossword:', props.crossword);
-      console.log('📦 typeof isHighlighted:', typeof props.crossword?.isHighlighted);
-      const isHighlighted = props.crossword.isHighlighted(x, y);
-      cells.push(
+      cellElements.push(
         <GridCell
           key={`cell_${x}_${y}`}
-          {...Object.assign(
-            {},
-            cellProps,
-            {
-              handleSelect,
-              x,
-              y,
-              isHighlighted,
-              isFocussed:
-                                    props.focussedCell
-                                    && x === props.focussedCell.x
-                                    && y === props.focussedCell.y,
-            },
-            this,
-          )}
-        />,
+          {...cellProps}
+          handleSelect={(x, y) => crossword?.onSelect(x, y)}
+          x={x}
+          y={y}
+          isHighlighted={isHighlighted}
+          isFocussed={isFocussed}
+        />
       );
 
-      separators = separators.concat(
-        createSeparator(x, y, getSeparators(x, y)),
-      );
+      const sep = createSeparator(x, y, separators[clueMapKey(x, y)]);
+      if (sep) separatorElements.push(sep);
     }
-  }));
+  }
 
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       className={classNames({
         crossword__grid: true,
-        'crossword__grid--focussed': !!props.focussedCell,
+        'crossword__grid--focussed': !!focussedCell,
       })}
     >
       <rect
@@ -147,8 +128,8 @@ export const Grid = (props) => {
         height={height}
         className="crossword__grid-background"
       />
-      {cells}
-      <g className="crossword__grid__separators">{separators}</g>
+      {cellElements}
+      <g className="crossword__grid__separators">{separatorElements}</g>
     </svg>
   );
 };
