@@ -16,13 +16,11 @@ import {
   cluesFor,
   entryHasCell,
   mapGrid,
-  getClearableCellsForClue,
   cellsForEntry,
   gridSize,
   checkClueHasBeenAnswered,
   buildSeparatorMap,
 } from './helpers';
-import { keycodes } from './keycodes';
 import { saveGridState, loadGridState } from './persistence';
 import { constants } from './constants';
 
@@ -64,7 +62,6 @@ class Crossword extends Component {
     addEventListener(window, 'scroll', this.handleScroll);
 
     const entryId = window.location.hash.replace('#', '');
-    // Focus the first cell if an entryId is present
     if (entryId) {
       this.focusFirstCellInClueById(entryId);
     }
@@ -97,37 +94,80 @@ class Crossword extends Component {
     }
   };
 
-    focusHiddenInput = (x, y) => {
-       const node = this.hiddenInputRef.current;
-       if (!node) return;
-    
-       // compute pixel position and size
-       const top   = gridSize(y);
-       const left  = gridSize(x);
-       const size  = constants.cellSize;
-    
-       // position & size the wrapper over the clicked cell
-       node.wrapper.style.top    = `${top}px`;
-       node.wrapper.style.left   = `${left}px`;
-       node.wrapper.style.width  = `${size}px`;
-       node.wrapper.style.height = `${size}px`;
-    
-       // now focus the actual <input>
-       node.input.focus();
-     };
+  /**
+   * Move & focus the hidden input over the clicked cell
+   */
+  focusHiddenInput = (x, y) => {
+    const node = this.hiddenInputRef.current;
+    if (!node) return;
+
+    const top = gridSize(y);
+    const left = gridSize(x);
+    const size = constants.cellSize;
+
+    node.wrapper.style.top = `${top}px`;
+    node.wrapper.style.left = `${left}px`;
+    node.wrapper.style.width = `${size}px`;
+    node.wrapper.style.height = `${size}px`;
+
+    node.input.focus();
+  };
+
+  /**
+   * Handler for click on hidden input area
+   */
+  onClickHiddenInput = (event) => {
+    const { cellInFocus } = this.state;
+    if (cellInFocus) {
+      this.focusHiddenInput(cellInFocus.x, cellInFocus.y);
+    }
+  };
+
+  /**
+   * Insert a character into current focused cell
+   */
+  insertCharacter = (char) => {
+    const { cellInFocus } = this.state;
+    if (!cellInFocus) return;
+    this.onMove({ x: cellInFocus.x, y: cellInFocus.y, value: char });
+  };
+
+  /**
+   * Handle keyboard events (letters, backspace, arrows)
+   */
+  onKeyDown = (event) => {
+    const key = event.key;
+    if (/^[a-zA-Z]$/.test(key)) {
+      this.insertCharacter(key.toUpperCase());
+    } else if (key === 'Backspace') {
+      this.insertCharacter('');
+    } else {
+      const { x, y } = this.state.cellInFocus || {};
+      if (key === 'ArrowLeft' && x > 0) {
+        this.focusHiddenInput(x - 1, y);
+      } else if (key === 'ArrowRight' && x < this.columns - 1) {
+        this.focusHiddenInput(x + 1, y);
+      } else if (key === 'ArrowUp' && y > 0) {
+        this.focusHiddenInput(x, y - 1);
+      } else if (key === 'ArrowDown' && y < this.rows - 1) {
+        this.focusHiddenInput(x, y + 1);
+      }
+    }
+    if (key.startsWith('Arrow') || key === 'Backspace') {
+      event.preventDefault();
+    }
+  };
 
   focusClue = (x, y, direction) => {
     const clue = cluesFor(this.clueMap, x, y)[direction];
     if (!clue) return;
     this.focusHiddenInput(x, y);
-    // Update state safely now that component is mounted
     this.setState({ cellInFocus: { x, y }, directionOfEntry: direction });
     window.history.replaceState(undefined, document.title, `#${clue.id}`);
     this.props.onFocusClue({ x, y, clueId: clue.id });
   };
 
   focusFirstCellInClueById = (clueId) => {
-    // Find entry by ID and focus its first cell
     const entry = this.props.data.entries.find((e) => e.id === clueId);
     if (entry) {
       const firstCell = cellsForEntry(entry)[0];
@@ -174,15 +214,9 @@ class Crossword extends Component {
     this.focusHiddenInput(x, y);
   };
 
-  /**
-   * Called by HiddenInput when it blurs:
-   * jumps focus back to wherever the crossword last had focus.
-   */
   goToReturnPosition = () => {
     const { cellInFocus } = this.state;
     if (cellInFocus) {
-      // re-focus the hidden input at the same cell,
-      // which will put the cursor back into the grid
       this.focusHiddenInput(cellInFocus.x, cellInFocus.y);
     }
   };
@@ -208,6 +242,9 @@ class Crossword extends Component {
               ref={this.hiddenInputRef}
               crossword={this}
               value=""
+              onClickHiddenInput={this.onClickHiddenInput}
+              onKeyDown={this.onKeyDown}
+              insertCharacter={this.insertCharacter}
             />
           </div>
         </div>
