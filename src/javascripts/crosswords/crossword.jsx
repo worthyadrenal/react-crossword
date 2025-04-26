@@ -26,6 +26,22 @@ import { keycodes } from './keycodes';
 import { saveGridState, loadGridState } from './persistence';
 
 class Crossword extends Component {
+  // Initialize state up front to avoid setState before mount
+  state = (() => {
+    const { cols, rows } = this.props.data.dimensions;
+    return {
+      grid: buildGrid(
+        rows,
+        cols,
+        this.props.data.entries,
+        this.props.loadGrid(this.props.id)
+      ),
+      cellInFocus: null,
+      directionOfEntry: null,
+      showAnagramHelper: false,
+    };
+  })();
+
   stickyClueWrapperRef = createRef();
   gameRef = createRef();
   gridWrapperRef = createRef();
@@ -37,12 +53,7 @@ class Crossword extends Component {
     this.columns = cols;
     this.rows = rows;
     this.clueMap = buildClueMap(props.data.entries);
-    this.state = {
-      grid: buildGrid(rows, cols, props.data.entries, props.loadGrid(props.id)),
-      cellInFocus: null,
-      directionOfEntry: null,
-      showAnagramHelper: false,
-    };
+    // Note: state is already initialized above, no need for this.state here
   }
 
   componentDidMount() {
@@ -50,8 +61,12 @@ class Crossword extends Component {
     mediator.on('window:orientationchange', debounce(this.setGridHeight, 200));
     this.setGridHeight();
     addEventListener(window, 'scroll', this.handleScroll);
+
     const entryId = window.location.hash.replace('#', '');
-    this.props.crossword.focusFirstCellInClueById(entryId);
+    // Focus the first cell if an entryId is present
+    if (entryId) {
+      this.focusFirstCellInClueById(entryId);
+    }
   }
 
   setGridHeight = () => {
@@ -91,9 +106,19 @@ class Crossword extends Component {
     const clue = cluesFor(this.clueMap, x, y)[direction];
     if (!clue) return;
     this.focusHiddenInput(x, y);
+    // Update state safely now that component is mounted
     this.setState({ cellInFocus: { x, y }, directionOfEntry: direction });
     window.history.replaceState(undefined, document.title, `#${clue.id}`);
     this.props.onFocusClue({ x, y, clueId: clue.id });
+  };
+
+  focusFirstCellInClueById = (clueId) => {
+    // Find entry by ID and focus its first cell
+    const entry = this.props.data.entries.find((e) => e.id === clueId);
+    if (entry) {
+      const firstCell = cellsForEntry(entry)[0];
+      this.focusClue(firstCell.x, firstCell.y, entry.direction);
+    }
   };
 
   onSelect = (x, y) => {
@@ -101,7 +126,10 @@ class Crossword extends Component {
     const focussed = this.clueInFocus();
     let newDirection;
 
-    if (this.state.cellInFocus?.x === x && this.state.cellInFocus?.y === y) {
+    if (
+      this.state.cellInFocus?.x === x &&
+      this.state.cellInFocus?.y === y
+    ) {
       newDirection = otherDirection(this.state.directionOfEntry);
       if (clues[newDirection]) this.focusClue(x, y, newDirection);
     } else if (focussed && entryHasCell(focussed, x, y)) {
@@ -132,6 +160,19 @@ class Crossword extends Component {
     this.focusHiddenInput(x, y);
   };
 
+  /**
+   * Called by HiddenInput when it blurs:
+   * jumps focus back to wherever the crossword last had focus.
+   */
+  goToReturnPosition = () => {
+    const { cellInFocus } = this.state;
+    if (cellInFocus) {
+      // re-focus the hidden input at the same cell,
+      // which will put the cursor back into the grid
+      this.focusHiddenInput(cellInFocus.x, cellInFocus.y);
+    }
+  };
+
   render() {
     const focused = this.clueInFocus();
     const gridProps = {
@@ -157,7 +198,7 @@ class Crossword extends Component {
           </div>
         </div>
         <Controls
-          hasSolutions={'solution' in this.props.data.entries[0]}
+          hasSolutions={!!this.props.data.entries.find((e) => e.solution)}
           clueInFocus={focused}
           crossword={this}
         />
@@ -165,7 +206,7 @@ class Crossword extends Component {
           clues={this.props.data.entries.map((entry) => ({
             entry,
             hasAnswered: checkClueHasBeenAnswered(this.state.grid, entry),
-            isSelected: this.clueInFocus()?.group.includes(entry.id),
+            isSelected: focused?.group.includes(entry.id),
           }))}
           focussed={focused}
           focusFirstCellInClueById={() => {}}

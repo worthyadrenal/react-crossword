@@ -9,32 +9,52 @@ class HiddenInput extends Component {
   }
 
   onClick(event) {
-    this.props.crossword.onClickHiddenInput(event);
+    const cw = this.props.crossword || {};
+    if (typeof cw.onClickHiddenInput === 'function') {
+      cw.onClickHiddenInput(event);
+    }
   }
 
-  
   onKeyDown(event) {
-    this.props.crossword.onKeyDown(event);
+    const cw = this.props.crossword || {};
+    if (typeof cw.onKeyDown === 'function') {
+      cw.onKeyDown(event);
+    }
   }
 
   onBlur(event) {
-    this.props.crossword.goToReturnPosition(event);
+    const cw = this.props.crossword || {};
+    if (typeof cw.goToReturnPosition === 'function') {
+      cw.goToReturnPosition(event);
+    }
   }
 
   onFocusPrevious() {
-    this.props.crossword.focusPreviousClue();
+    const cw = this.props.crossword || {};
+    if (typeof cw.focusPreviousClue === 'function') {
+      cw.focusPreviousClue();
+    }
   }
 
   onFocusNext() {
-    this.props.crossword.focusNextClue();
+    const cw = this.props.crossword || {};
+    if (typeof cw.focusNextClue === 'function') {
+      cw.focusNextClue();
+    }
   }
 
   touchStart(event) {
-    this.props.crossword.onClickHiddenInput(event);
+    const cw = this.props.crossword || {};
+    if (typeof cw.onClickHiddenInput === 'function') {
+      cw.onClickHiddenInput(event);
+    }
   }
 
   handleChange(event) {
-    this.props.crossword.insertCharacter(event.target.value);
+    const cw = this.props.crossword || {};
+    if (typeof cw.insertCharacter === 'function') {
+      cw.insertCharacter(event.target.value);
+    }
     this.setState({
       value: '',
     });
