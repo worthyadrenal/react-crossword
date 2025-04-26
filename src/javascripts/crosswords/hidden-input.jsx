@@ -12,6 +12,7 @@ class HiddenInput extends Component {
     this.props.crossword.onClickHiddenInput(event);
   }
 
+  
   onKeyDown(event) {
     this.props.crossword.onKeyDown(event);
   }
@@ -37,6 +38,12 @@ class HiddenInput extends Component {
     this.setState({
       value: '',
     });
+  }
+
+  focusHiddenInput(x, y) {
+    if (this.input) {
+      this.input.focus();
+    }
   }
 
   render() {

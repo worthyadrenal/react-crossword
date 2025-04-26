@@ -141,6 +141,7 @@ class Crossword extends Component {
   onSelect = (x, y) => {
     const cell = this.state.cellInFocus;
     const clue = cluesFor(this.clueMap, x, y);
+    console.log("🧠 Clues at", x, y, clue);
     const focussed = this.clueInFocus();
     let newDirection;
     const isInClue = focussed ? entryHasCell(focussed, x, y) : false;
@@ -199,6 +200,12 @@ class Crossword extends Component {
   };
   focusCurrentCell = () => { const cell = this.state.cellInFocus; if (cell) this.focusHiddenInput(cell.x, cell.y); };
 
+  focusHiddenInput = (x, y) => {
+    if (this.hiddenInputComponent && this.hiddenInputComponent.focusHiddenInput) {
+      this.hiddenInputComponent.focusHiddenInput(x, y);
+    }
+  }
+  
   findNextEditableCell = (dx, dy) => {
     const cell = this.state.cellInFocus;
     if (!cell) return null;
