@@ -24,6 +24,7 @@ import {
 } from './helpers';
 import { keycodes } from './keycodes';
 import { saveGridState, loadGridState } from './persistence';
+import { constants } from './constants';
 
 class Crossword extends Component {
   // Initialize state up front to avoid setState before mount
@@ -96,11 +97,24 @@ class Crossword extends Component {
     }
   };
 
-  focusHiddenInput = (x, y) => {
-    if (this.hiddenInputRef.current) {
-      this.hiddenInputRef.current.input.focus();
-    }
-  };
+    focusHiddenInput = (x, y) => {
+       const node = this.hiddenInputRef.current;
+       if (!node) return;
+    
+       // compute pixel position and size
+       const top   = gridSize(y);
+       const left  = gridSize(x);
+       const size  = constants.cellSize;
+    
+       // position & size the wrapper over the clicked cell
+       node.wrapper.style.top    = `${top}px`;
+       node.wrapper.style.left   = `${left}px`;
+       node.wrapper.style.width  = `${size}px`;
+       node.wrapper.style.height = `${size}px`;
+    
+       // now focus the actual <input>
+       node.input.focus();
+     };
 
   focusClue = (x, y, direction) => {
     const clue = cluesFor(this.clueMap, x, y)[direction];

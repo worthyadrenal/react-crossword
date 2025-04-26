@@ -83,7 +83,7 @@ export const Grid = ({ rows, columns, cells, separators, crossword, focussedCell
 
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < columns; x++) {
-      const cellProps = cells[y]?.[x];  // <--- Fix the [row][column] order
+      const cellProps = cells[x]?.[y];  // <--- should be fixed this way.
 
       if (!cellProps || !cellProps.isEditable) continue;
 

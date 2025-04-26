@@ -7,25 +7,36 @@
 @use "sass:color" as color;
 @use "../_mq-config" as mq;
 
+/* Ensure the grid wrapper acts as the positioning context for the hidden input */
+.crossword__container__grid-wrapper {
+  position: relative;
+}
+
+/* Absolutely position the hidden-input wrapper; size via JS for flexibility */
 .crossword__hidden-input-wrapper {
-    position: absolute;
+  position: absolute;
+  pointer-events: none; /* clicks pass through into the SVG cell */
 }
 
+/* Style the hidden input itself to fill its wrapper and accept focus/clicks */
 .crossword__hidden-input {
-    border: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    background-color: transparent;
-    font-size: 16px; // stop zooming on focus
-    font-family: $f-serif-text;
-    font-weight: 800;
-    text-anchor: middle;
+  pointer-events: auto;
+  border: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: transparent;
+  font-size: 16px; /* stop mobile zoom on focus */
+  font-family: $f-serif-text;
+  font-weight: 800;
+  text-anchor: middle;
+  outline: none;
 }
 
+/* Keep the prev/next inputs hidden off-screen */
 .crossword__hidden-input-prev-next {
-    position: absolute;
-    left: -1000px;
-    opacity: 0;
+  position: absolute;
+  left: -1000px;
+  opacity: 0;
 }
